@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <mutex>
 #include "hilos.h"
 #include "vector.h"
 using namespace std;
@@ -31,8 +32,8 @@ void DemoThreads(){
 
     // Crear y lanzar los threads
     for (int i = 0; i < num_threads; ++i) {
-        // Crear el objeto thread
-        thread t(func, i, vect);
+        // Pasar vect por referencia para que todos usen el mismo
+        thread t(func, i, std::ref(vect));
         
         // Mover el thread al vector (no se puede copiar, solo mover)
         threads.push_back(move(t));
@@ -42,5 +43,7 @@ void DemoThreads(){
     for (auto& t : threads) {
         t.join();
     }
+
     cout << "Todos los threads han terminado." << endl;
+    cout << "Contenido final del vector compartido: " << vect << endl;
 }
